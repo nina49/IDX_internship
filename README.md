@@ -1,7 +1,7 @@
 # IDX_internship
 Data Analyst Internship Project: Real Estate Market Analysis
 
-**## Week 0Week 0**
+** Week 0**
 
 Download all CRMLSListingYYYYMM.csv and CRMLSSoldYYYYMM.csv files from the FTP server for dates ranging from 202401 to 202605.
 Run the extraction script for any missing months.
