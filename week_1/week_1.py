@@ -30,8 +30,8 @@ rows_after_filter_l =len(df_listing)
 print(f"Number of rows after Residential filter: {rows_after_filter_l}")
 
 #Saves Filtered Listing DataFrame as a new CVS file
-df_listing.to_csv("../Data/Listing_Combined.csv", index=False)
-df_listing_concat.to_csv("../Data/Listing_Combined_2.csv", index=False)
+df_listing.to_csv("./Data/Listing_Combined.csv", index=False)
+df_listing_concat.to_csv("./Data/Listing_Combined_2.csv", index=False)
 
 #Stores Sold CSV files in a sorted listed
 sold_csv = sorted(data.glob("CRMLSSold*.csv"))
@@ -63,12 +63,12 @@ rows_after_filter_s = len(df_sold)
 print(f"Number of rows after Residential filter (Sold): {rows_after_filter_s}")
 
 #Saves Filtered Sold DataFrame as a new CVS file
-df_sold.to_csv("../Data/Sold_Combined.csv", index=False)
-df_sold_concat.to_csv("../Data/Sold_Combined_2.csv",index=False)
+df_sold.to_csv("./Data/Sold_Combined.csv", index=False)
+df_sold_concat.to_csv("./Data/Sold_Combined_2.csv",index=False)
 
 #Results
 #CRMLS_Listing
-#Number of files: 29
+#Number of files: 29X4
 #Number of rows before concatenation: 887859
 #Number of rows after concatenation: 887859
 #Number of rows before Residential filter: 887859
