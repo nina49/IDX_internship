@@ -15,7 +15,7 @@ Data Analyst Internship Project: Real Estate Market Analysis
 
 ### Week 2-3
 
-## Part 1: Understanding the Data
+# Part 1: Understanding the Data
 - Check the dataset rows and columns
 - Find the Residential Percentage over other property type share
 - Find missing values and identify columns with more than 90% missing data.
@@ -28,7 +28,7 @@ Data Analyst Internship Project: Real Estate Market Analysis
 - Percentage of Homes Sold above vs below list price
 - Counties with the Highest Median Closing Prices
 
-## Part 2: Mortgage Rate Enrichment
+# Part 2: Mortgage Rate Enrichment
 - Download the 30-year mortgage rate from the FRED database.
 - Convert weekly mortgage rates into monthly averages.
 - Create a year_month column in both Listings and Sold datasets.
