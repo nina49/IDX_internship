@@ -61,17 +61,18 @@ df_missing_l= pd.DataFrame({
 
 high_missing_l= df_missing_l[df_missing_l["Percentage(%)"]>90]
 missing_vals_l = high_missing_l.index.tolist()
-print(f"Dropped {len(missing_vals_l)} columns (Listing):{missing_vals_l}")
 
 #Listing out all the columns in Listing CSV
 df_cleaned.columns.tolist()
 
 #Identifying merging duplicates with .1 at the end of the column names
 merge_duplicates = [col for col in df_cleaned.columns if col.endswith('.1')]
-print(f"Dropped {len(merge_duplicates)} columns(Listing): {merge_duplicates}")
 
 #Dropping >90% Missing Values + Merge Duplicates
 df_cleaned=df_cleaned.drop(columns=merge_duplicates + missing_vals_l ,errors='ignore')
+print(f"Dropped {len(missing_vals_l)} columns (Listing):{missing_vals_l}")
+print(f"Dropped {len(merge_duplicates)} columns(Listing): {merge_duplicates}")
+
 
 #Categorizing the columns based on analytical value
 
@@ -88,7 +89,7 @@ key_columns = [
     "YearBuilt",
     "rate_30yr_fixed",
 ]
-#Fully retain for now: drop later
+#Fully retain for now
 flag_columns = [
     "listing_after_close",
     "purchase_after_close",
@@ -233,6 +234,12 @@ df_cleaned = df_cleaned.drop(columns=[col for col in cols_to_drop if col in df_c
 print(f"Dropped {len(cols_to_drop)} columns")
 print(f"Total number of dropped listing columns: { len(cols_to_drop) + len(merge_duplicates)+ len(missing_vals_l)} columns")
 
+#Drop flag columns
+df_cleaned_no_flag= df_cleaned.drop(columns=[col for col in flag_columns if col in df_cleaned_s.columns])
+print(f"Total number of dropped sold columns: { len(cols_to_drop) + len(merge_duplicates)+ len(missing_vals_l) + len(flag_columns)} columns")
+print(f"Number of columns in cleaned (Sold) without flag columns: {len(df_cleaned_no_flag.columns)}")
+
+
 
 #Sold
 df_sold= pd.read_csv(data_4 / "Sold_Combined.csv", low_memory=False)
@@ -265,7 +272,7 @@ df_cleaned_s["bedroom_and_bathroom_invalid"] = (df_cleaned_s["BedroomsTotal"] < 
 print(f"Number of rows with invalid Close Price (<= 0) (Sold): {df_cleaned_s['close_price_invalid'].sum()}")
 print(f"Number of rows with invalid Living Area (<= 0) (Sold): {df_cleaned_s['living_area_invalid'].sum()}")
 print(f"Number of rows with invalid Days on Market (< 0) (Sold): {df_cleaned_s['dom_invalid'].sum()}")
-print(f"Number of rows with invalid Bedroom or Bathroom (< 0) (Sold): {df_cleaned_s['bedroom_or_bathroom_invalid'].sum()}")
+print(f"Number of rows with invalid Bedroom or Bathroom (< 0) (Sold): {df_cleaned_s['bedroom_and_bathroom_invalid'].sum()}")
 
 # Geographic Data Check for Sold
 df_cleaned_s["coords_empty"] = df_cleaned_s["Latitude"].isna() | df_cleaned_s["Longitude"].isna()
@@ -397,20 +404,27 @@ cols_to_drop_s= cols_to_drop +["OriginatingSystemSubName", "OriginatingSystemNam
 df_cleaned_s = df_cleaned_s.drop(columns=[col for col in cols_to_drop_s if col in df_cleaned_s.columns])
 print(f"Dropped {len(cols_to_drop_s)} columns")
 print(f"Total number of dropped sold columns: { len(cols_to_drop_s) + len(missing_vals_s)} columns")
-
-#Cleaned Datasets into CSVs
-df_cleaned.to_csv("./Data/Cleaned_Listing.csv", index=False)
-df_cleaned_s.to_csv("./Data/Cleaned_Sold.csv", index=False)
+print(f"Number of columns in cleaned (Sold) including flag columns: {len(df_cleaned_s)}")
 
 
+#Drop flag columns
+df_cleaned_s_no_flag= df_cleaned_s.drop(columns=[col for col in flag_columns if col in df_cleaned_s.columns])
+print(f"Total number of dropped sold columns: { len(cols_to_drop_s) + len(missing_vals_s) + len(flag_columns)} columns")
+print(f"Number of columns in cleaned (Sold) without flag columns: {len(df_cleaned_s_no_flag.columns)}")
+
+#Cleaned Datasets into CSVs (both with flag and no flag columns)
+df_cleaned.to_csv("./Data/Cleaned_Listing(with_flag).csv", index=False)
+df_cleaned_no_flag("./Data/Cleaned_Listing(without_flag).csv", index=False)
+df_cleaned_s_no_flag.to_csv("./Data/Cleaned_Sold(without_flag).csv", index=False)
+df_cleaned_s.to_csv("./Data/Cleaned_Sold(with_flag).csv", index=False)
 
 
 
 
 
-#Results
 
-#                                                  Listing
+#                                             #Results    
+#                                   Listing
 # Starting: Rows, Columns: (564289, 86)
 #Dropped 13 columns >90% Missing: 
 # ['FireplacesTotal', 'AboveGradeFinishedArea', 'TaxAnnualAmount', 'BuilderName', 'TaxYear', '
@@ -446,6 +460,7 @@ df_cleaned_s.to_csv("./Data/Cleaned_Sold.csv", index=False)
 #Positive Longitude/outside california: 76
 #Implausible/Out of State Coordinates: 323
 
+
 #                                                Sold
 #Starting: Rows,Columns : 426372, 82
 #Dropped 15 columns (Sold): ['WaterfrontYN', 'BasementYN', 'FireplacesTotal', 'AboveGradeFinishedArea',
@@ -479,3 +494,62 @@ df_cleaned_s.to_csv("./Data/Cleaned_Sold.csv", index=False)
 #Zero Coordinates: 30
 #Positive Longitude/outside california: 32
 #Implausible/Out of State Coordinates: 94
+
+#                                        Dropped Columns
+
+#                                Dropped 13 columns >90% Missing (Listing): 
+# ['FireplacesTotal', 'AboveGradeFinishedArea', 'TaxAnnualAmount', 'BuilderName', 'TaxYear', '
+# BuildingAreaTotal', 'ElementarySchoolDistrict', 'CoBuyerAgentFirstName', 'BelowGradeFinishedArea', 
+# 'BusinessType', 'CoveredSpaces', 'LotSizeDimensions', 'MiddleOrJuniorSchoolDistrict'] 
+#                                  Dropped 11 columns Merge Duplicates (Listing): 
+# 'PropertyType.1', 'ListAgentFirstName.1', 'DaysOnMarket.1', 'LivingArea.1', 'Longitude.1', 'Latitude.1', 'ListPrice.1',
+#  'ListAgentLastName.1', 'CloseDate.1', 'BuyerOfficeName.1', 'UnparsedAddress.1'
+
+#                                 Dropped 15 columns >90% Missing (Sold): #Dropped 15 columns (Sold): ['WaterfrontYN', 'BasementYN', 'FireplacesTotal', 'AboveGradeFinishedArea',
+# 'TaxAnnualAmount', 'BuilderName', 'TaxYear', 'BuildingAreaTotal', 'ElementarySchoolDistrict', 
+# 'CoBuyerAgentFirstName', 'BelowGradeFinishedArea', 'BusinessType', 'CoveredSpaces', 'LotSizeDimensions', 'MiddleOrJuniorSchoolDistrict']
+#                   Dropped 2 columns Unique to Sold: OriginatingSystemSubName", OriginatingSystemName
+          
+#                           Dropped Columns (Both Listing and Sold):
+#1. Redundant, Not Informative + High Missing Values (>85%)
+# - ElementarySchool
+# - MiddleOrJuniorSchool
+# - HighSchool
+# - HighSchoolDistrict
+# - BuyerAgencyCompensation
+# - BuyerAgencyCompensationType
+
+# Too Many Unique Values + Existing Alternatives
+# - SubdivisionName
+# - UnparsedAddress
+# - MLSAreaMajor
+# - BuyerAgentMlsId
+# - BuyerAgentFirstName
+# - BuyerAgentLastName
+# - ListingKeyNumeric
+# - StreetNumberNumeric
+# - ListingID
+
+# Redundant Information / Agent Metadata
+# - AssociationFee
+# - AssociationFeeFrequency
+# - FireplaceYN
+# - Levels
+# - Stories
+# - GarageSpaces
+# - ListAgentEmail
+# - ListAgentFirstName
+# - ListAgentLastName
+# - CoListAgentFirstName
+# - CoListAgentLastName
+# - CoListOfficeName
+
+# Similar Columns Exists 
+# - AttachedGarageYN
+# - LotSizeArea
+
+#                                        Overall Column Check
+#Listing: Started with 86 ---> +11 flag columns ---> 46 columns(including flags) ----> 35 columns (without flags)
+#Sold: Started with 82 ---> +11 flag columns ---> 49 columns(including flags) ----> 38 columns (without flags)
+
+
