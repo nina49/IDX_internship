@@ -86,6 +86,7 @@ print(f"Sample summary statistic (Sold): School District\n{segment_district_s.he
 
 
 #                                                        Engineering Metrics: Sold
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #    ClosePrice  OriginalListPrice  LivingArea   CloseDate  PurchaseContractDate  ListingContractDate  price_ratio        ppsf    YrMo  listing_to_contract_days  contract_to_close_days
 # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # 0    240000.0           499000.0      1140.0  2024-01-26            2023-11-22           2021-10-06     0.480962  210.526316 2024-01                     777.0                    65.0

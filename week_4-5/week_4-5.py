@@ -235,9 +235,9 @@ print(f"Dropped {len(cols_to_drop)} columns")
 print(f"Total number of dropped listing columns: { len(cols_to_drop) + len(merge_duplicates)+ len(missing_vals_l)} columns")
 
 #Drop flag columns
-df_cleaned_no_flag= df_cleaned.drop(columns=[col for col in flag_columns if col in df_cleaned_s.columns])
-print(f"Total number of dropped sold columns: { len(cols_to_drop) + len(merge_duplicates)+ len(missing_vals_l) + len(flag_columns)} columns")
-print(f"Number of columns in cleaned (Sold) without flag columns: {len(df_cleaned_no_flag.columns)}")
+df_cleaned_no_flag= df_cleaned.drop(columns=[col for col in flag_columns if col in df_cleaned.columns])
+print(f"Total number of dropped listing columns: { len(cols_to_drop) + len(merge_duplicates)+ len(missing_vals_l) + len(flag_columns)} columns")
+print(f"Number of columns in cleaned (Listing) without flag columns: {len(df_cleaned_no_flag.columns)}")
 
 
 
@@ -414,7 +414,7 @@ print(f"Number of columns in cleaned (Sold) without flag columns: {len(df_cleane
 
 #Cleaned Datasets into CSVs (both with flag and no flag columns)
 df_cleaned.to_csv("./Data/Cleaned_Listing(with_flag).csv", index=False)
-df_cleaned_no_flag("./Data/Cleaned_Listing(without_flag).csv", index=False)
+df_cleaned_no_flag.to_csv("./Data/Cleaned_Listing(without_flag).csv", index=False)
 df_cleaned_s_no_flag.to_csv("./Data/Cleaned_Sold(without_flag).csv", index=False)
 df_cleaned_s.to_csv("./Data/Cleaned_Sold(with_flag).csv", index=False)
 
