@@ -1,0 +1,90 @@
+import pandas as pd
+from pathlib import Path
+
+data_8 = Path("./Data")
+final_listing = pd.read_csv(data_8 / "Listing_outlier_filtered.csv", low_memory=False)
+final_sold = pd.read_csv(data_8/"Sold_outlier_filtered.csv", low_memory=False)
+
+#Data Check for Listing
+final_listing=final_listing.drop(columns=["outlier_flag"])
+print(final_listing["PropertyType"].unique())
+print(f"Number of rows and columns{final_listing.shape}")
+print(final_listing.columns.tolist())
+final_listing.head()
+
+#Invalid Dates Filter
+listing_clean = final_listing[
+    (final_listing["close_price_invalid"] == False) &
+    (final_listing["dom_invalid"] == False) &
+    (final_listing["listing_after_close"] == False) &
+    (final_listing["purchase_after_close"] == False)
+].copy()
+
+print(f"Before: {final_listing.shape}, After: {listing_clean.shape}")
+#Before: (481097, 52), After: (480852, 52)
+filtered_percent_listing=(481097-480852)/(481097)
+#0.0005% data with flagged values removed
+listing_clean.to_csv(data_8/"Final_Filtered_Listing.csv", index=False)
+
+#Data Check for Sold 
+final_sold=final_sold.drop(columns=["outlier_flag"])
+print(final_sold["PropertyType"].unique())
+print(f"Number of rows and columns{final_sold.shape}")
+print(final_sold.columns.tolist())
+final_sold.head()
+
+
+#Invalid Dates Filter
+sold_clean = final_sold[
+    (final_sold["close_price_invalid"] == False) &
+    (final_sold["dom_invalid"] == False) &
+    (final_sold["listing_after_close"] == False) &
+    (final_sold["purchase_after_close"] == False)
+].copy()
+
+print(f"Before: {final_sold.shape}, After: {sold_clean.shape}")
+#Before: (359806, 55), After: (359587, 55)
+filtered_percent_sold=(359806-359587)/(359806)
+#0.0006% data with flagged values removed
+sold_clean.to_csv(data_8/"Final_Filtered_Sold.csv", index=False)
+
+# Price Ratio Data Filter Check
+# Some records have corrupted OriginalListPrice or ClosePrice values
+# (1250.00 instead of 1,250,000.00), resulting in (some 0, some over 1000)
+# Filter to a realistic range: a home selling for less than 30% or more than 300% 
+# of its original list price is not possible.
+
+before_shape = sold_clean.shape
+sold_clean = sold_clean[
+    (sold_clean["price_ratio"] >= 0.3) & (sold_clean["price_ratio"] <= 3.0)
+]
+after_shape = sold_clean.shape
+
+print(f"Before price_ratio filter: {before_shape}")
+print(f"After price_ratio filter: {after_shape}")
+print(f"Rows removed: {before_shape[0] - after_shape[0]}")
+print(sold_clean["price_ratio"].describe())
+
+sold_clean.to_csv(data_8 / "Final_Filtered_Sold.csv", index=False)
+print(f"Saved to: {(data_8 / 'Final_Filtered_Sold.csv').resolve()}")
+print(f"Last modified: {os.path.getmtime(data_8 / 'Final_Filtered_Sold.csv')}")
+#Before 
+#Rows remaining: 359587
+#count    3.590610e+05
+#mean     1.067291e+00
+#std      7.211391e+00
+#min      9.207366e-07
+#25%      9.636364e-01
+#50%      1.000000e+00
+#75%      1.022449e+00
+#max      1.128000e+03
+
+#After
+#count    358349.000000
+#mean          0.996878
+#std           0.078915
+#min           0.302222
+#25%           0.963636
+#50%           1.000000
+#75%           1.022313
+#max           2.890000
