@@ -114,7 +114,7 @@ Data Analyst Internship Project: Real Estate Market Analysis
 - Compare the dataset before and after filtering.
 - Compare median values before and after removing outliers.
 
-## Week 8-10: 
+## Week 8-10
 Tableau Dashboard Development
 - Import the cleaned and Residential-filtered datasets into Tableau.
 - Connect the engineered market metrics to Tableau.
